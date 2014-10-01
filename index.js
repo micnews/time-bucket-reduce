@@ -19,13 +19,13 @@ function createError (message) {
 }
 
 module.exports = function (opts) {
-  if(!opts) throw new Error('opts object {ts, reduce, output} is required')
-  var ts = opts.ts || createError('opts.ts(data) is required')
-  var reduce = opts.reduce || createError('opts.reduce(mapped_data) is required')
+  opts = opts || {}
+  var ts = opts.ts || function (e) { return e.ts || e[0] }
+  var reduce = opts.reduce || function (a, b) { return (a || 0) + b }
   var min = opts.min || 2
   var output = opts.output || console.log.bind(console)
 
-  var map = opts.map || function id (e) { return e }
+  var map = opts.map || function id (e) { return 1 }
 
   var states = parts.map(function (name) {
     return {type: name, start: null, value: null}

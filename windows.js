@@ -9,58 +9,47 @@ var parts = [
   'FullYear'
 ]
 
-var d = new Date()
-var e = new Date(d)
-
 //OH NO DATES
 var UTC = 'UTC'
 
-//parts.forEach(function (part, i) {
-//  console.log(e.toISOString(), +e, part)
-//  console.log(part == 'Date' ? 1 : 0)
-//  e['set'+ UTC + part](part == 'Date' ? 1 : 0)
-//  console.log(e['get'+ UTC + part]())
-//})
-//
-module.exports = function (getTS, reduce, map, output, min) {
+function createError (message) {
+  return function () {
+    throw new Error('message')
+  }
+}
 
-  min = min || 2
+module.exports = function (opts) {
+  if(!opts) throw new Error('opts object {ts, reduce, output} is required')
+  var ts = opts.ts || createError('opts.ts(data) is required')
+  var reduce = opts.reduce || createError('opts.reduce(mapped_data) is required')
+  var min = opts.min || 2
+  var output = opts.output || console.log.bind(console)
+
+  var map = opts.map || function id (e) { return e }
 
   var states = parts.map(function (name) {
     return {type: name, start: null, value: null}
   })
 
+  function rollup (i, start, data) {
+    if(i >= states.length) return
+    var state = states[i]
+    var prev = states[i - 1].type
+    start['set'+ UTC + prev](prev == 'Date' ? 1 : 0)
+
+    if(+start == state.start)
+      return state.value = reduce(state.value, data)
+
+    if(i >= min && state.value)
+      output(state.value, state.start, state.type, i)
+
+    state.start = +start
+    rollup(i+1, start, state.value)
+    state.value = reduce(null, data)
+  }
+
   return function (data) {
-    var ts = getTS(data)
-    var start = new Date(ts)
-
-    data = map(data)
-
-    for(var i = 0; i < states.length; i++) {
-      var state = states[i]
-      var part = state.type
-
-      var doOutput = i >= min
-
-      // if the data is within the current window
-      // roll it into the current value.
-      if(+start === state.start) {
-        data = state.value = reduce(state.value, data)
-        return
-      }
-      // if the data is inside a new window
-      // output previous value, and start a new value.
-      else {
-        if(doOutput && state.value) output(state.value, state.start, part, i)
-        state.start = +start
-        var _data = data
-        data = state.value
-        state.value = reduce(null, _data)
-        
-      }
-      //months are counted from 0 but dates are counted from 1 (!!!)
-      start['set'+ UTC + part](part == 'Date' ? 1 : 0)
-    }
+    return rollup(1, new Date(ts(data)), map(data))
   }
 }
 
@@ -70,13 +59,11 @@ if(!module.parent) {
   var NOW = Date.now()
   var ts = NOW
 
-  var windows = module.exports(function ts (e) { 
-    return e.ts
-  }, function reduce (a, b) {
-    return (a || 0) + b
-  }, function map () {
-    return 1
-  }, console.log)
+  var windows = module.exports({
+    ts: function (e) { return e.ts }, 
+    reduce: function (a, b) { return (a || 0) + b },
+    map: function () { return 1}
+  })
 
   while(ts < NOW+10000000000) {
     windows({ts: ts += Math.round(Math.random()*10000), value: Math.random()})

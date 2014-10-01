@@ -49,7 +49,11 @@ module.exports = function (opts) {
   }
 
   return function (data) {
-    return rollup(1, new Date(ts(data)), map(data))
+    var mapped = map(data)
+    //treat map that returns null as filter
+    if(mapped == null) return
+
+    return rollup(1, new Date(ts(data)), mapped)
   }
 }
 

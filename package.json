@@ -1,17 +1,11 @@
 {
-  "name": "timeview",
-  "description": "",
+  "name": "time-bucket-reduce",
+  "description": "reduce timeseries data into second, minute, hour, date, month, fullyear buckets",
   "version": "0.0.0",
-  "homepage": "https://github.com/dominictarr/timeview",
+  "homepage": "https://github.com/micnews/time-bucket-reduce",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/timeview.git"
-  },
-  "dependencies": {
-    "csv-line": "~1.2.0",
-    "pull-split": "~0.1.2",
-    "pull-stream": "~2.25.0",
-    "stream-to-pull-stream": "~1.4.1"
+    "url": "git://github.com/micnews/time-bucket-reduce.git"
   },
   "devDependencies": {
     "tape": "~3.0.0"
@@ -19,6 +13,6 @@
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
-  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
+  "author": "Dominic Tarr <dominictarr@micnews.com> (http://micnews.com)",
   "license": "MIT"
 }

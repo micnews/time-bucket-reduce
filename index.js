@@ -48,7 +48,7 @@ module.exports = function (opts) {
     state.value = reduce(null, data)
   }
 
-  return function (data) {
+  function reduce (data) {
     var mapped = map(data)
     //treat map that returns null as filter
     if(mapped == null) return
@@ -58,6 +58,14 @@ module.exports = function (opts) {
 
     return rollup(1, new Date(t), mapped)
   }
+
+  reduce.dump = function () {
+    return states.map(function (e) {
+      return {type: e.name, start: e.start, value: e.value}
+    })
+  }
+
+  return reduce
 }
 
 

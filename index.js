@@ -20,7 +20,7 @@ function createError (message) {
 
 module.exports = function (opts) {
   opts = opts || {}
-  var ts = opts.ts || function (e) { return e.ts || e[0] }
+  var ts = opts.ts || function (e) { return e.ts == null ? e[0] : e.ts }
   var reduce = opts.reduce || function (a, b) { return (a || 0) + b }
   var min = opts.min || 2
   var output = opts.output || console.log.bind(console)
@@ -52,8 +52,11 @@ module.exports = function (opts) {
     var mapped = map(data)
     //treat map that returns null as filter
     if(mapped == null) return
+    var t = ts(data)
+    if(isNaN(t))
+      throw new Error('must have timestamp, but had:' + t)
 
-    return rollup(1, new Date(ts(data)), mapped)
+    return rollup(1, new Date(t), mapped)
   }
 }
 
@@ -64,7 +67,7 @@ if(!module.parent) {
   var ts = NOW
 
   var windows = module.exports({
-    ts: function (e) { return e.ts }, 
+    ts: function (e) { return e.ts},
     reduce: function (a, b) { return (a || 0) + b },
     map: function () { return 1}
   })

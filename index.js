@@ -48,9 +48,10 @@ module.exports = function (opts) {
     state.value = reduce(null, data)
   }
 
-  function reduce (data) {
+  function reducer (data) {
     var mapped = map(data)
     //treat map that returns null as filter
+
     if(mapped == null) return
     var t = ts(data)
     if(isNaN(t))
@@ -59,13 +60,13 @@ module.exports = function (opts) {
     return rollup(1, new Date(t), mapped)
   }
 
-  reduce.dump = function () {
+  reducer.dump = function () {
     return states.map(function (e) {
-      return {type: e.name, start: e.start, value: e.value}
+      return {type: e.type, start: e.start, value: e.value}
     })
   }
 
-  return reduce
+  return reducer
 }
 
 

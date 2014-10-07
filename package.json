@@ -1,7 +1,7 @@
 {
   "name": "time-bucket-reduce",
   "description": "reduce timeseries data into second, minute, hour, date, month, fullyear buckets",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/micnews/time-bucket-reduce",
   "repository": {
     "type": "git",

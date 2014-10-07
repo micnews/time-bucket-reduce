@@ -66,6 +66,8 @@ module.exports = function (opts) {
     })
   }
 
+  reducer.rollup = rollup
+
   return reducer
 }
 
